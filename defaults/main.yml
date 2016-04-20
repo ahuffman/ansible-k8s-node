@@ -1,17 +1,5 @@
-k8s-node
-=========
+---
 
-An ansible role to configure kubernetes nodes/minions on Red Hat Enterpise Linux based hosts.
-
-Requirements
-------------
-
-N/A
-
-Role Variables
---------------
-
-Defaults:
 #docker settings
 docker_options: --selinux-enabled
 docker_cert_path: /etc/docker
@@ -39,39 +27,3 @@ kubelet_hostname_override: ''
 k8s_cluster_dns_ip: '' #use if you have deployed skydns
 kubelet_additional_args: '' #use if you want to pass additional kubelet switches
 k8s_kube_proxy_additional_args: '' #use if you want to pass additional kube-proxy switches
-
-Variables:
-#kubernetes packages
-k8s_node_packages:
-  - flannel
-  - docker
-  - kubernetes-node
-
-Dependencies
-------------
-
-N/A
-
-Example Playbook
-----------------
-
-    - hosts: kubernetes_nodes
-      vars:
-        k8s_master_url: http://192.168.122.20
-        k8s_cluster_domain: foo.bar.com
-        k8s_cluster_dns_ip: 192.168.22.10
-        etcd_server_url: http://192.168.122.20
-        etcd_port: 2379
-        etcd_key: /foobar01/network
-      roles:
-         - k8s-node
-
-License
--------
-
-MIT
-
-Author Information
-------------------
-
-Andrew J. Huffman

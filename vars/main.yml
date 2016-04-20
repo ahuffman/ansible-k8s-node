@@ -1,0 +1,7 @@
+---
+
+#kubernetes packages
+k8s_node_packages:
+  - flannel
+  - docker
+  - kubernetes-node

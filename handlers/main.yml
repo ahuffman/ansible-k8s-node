@@ -1,0 +1,15 @@
+---
+
+#Reload systemctl to pick up flannel network config
+- name: Reload systemctl daemon
+  command: /usr/bin/systemctl daemon-reload
+
+#Restart services
+- name: Restart flanneld
+  service: name=flanneld state=restarted
+
+- name: Restart kubelet
+  service: name=kubelet state=restarted
+
+- name: Restart kube-proxy
+  service: name=kube-proxy state=restarted
