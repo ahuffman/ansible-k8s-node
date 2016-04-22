@@ -34,6 +34,8 @@
   notify: 
     - Restart kubelet
     - Restart kube-proxy
+  when: (k8s_mst_is_node != True) or
+        (k8s_mst_is_node is undefined) #compat with k8s-master role
 
 - name: Configure kubernetes node settings
   template: src=kubernetes/kubelet.j2 dest=/etc/kubernetes/kubelet
