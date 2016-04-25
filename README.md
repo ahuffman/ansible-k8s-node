@@ -54,15 +54,12 @@ N/A
 
 Example Playbook
 ----------------
+Bare minimum requirements where 192.168.122.20 is the IP address of the master server.  The defaults take care of the rest.  See k8s-master bare minimum requirements to ensure the configuration lines up with the defaults there.
 
     - hosts: kubernetes_nodes
       vars:
         k8s_master_url: http://192.168.122.20
-        k8s_cluster_domain: foo.bar.com
-        k8s_cluster_dns_ip: 192.168.22.10
         etcd_server_url: http://192.168.122.20
-        etcd_port: 2379
-        etcd_key: /foobar01/network
       roles:
          - k8s-node
 
