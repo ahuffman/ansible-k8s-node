@@ -14,12 +14,18 @@ etcd_port: 2379
 etcd_key: /kube01/network
 
 #kubernetes node settings
-k8s_master_url: http://kubernetes.local
-k8s_master_port: 8080
+k8s_master_url: https://kubernetes.local
+k8s_master_port: 6443
 k8s_allow_privileged: false
 k8s_log_level: 0
 k8s_logtostderr: true
-kubelet_address: 0.0.0.0
+#kubelet_address: 0.0.0.0 #override in host_vars with the host's IP address for proper kubelet certificate generation
+k8s_node_cert_path: /etc/kubernetes/auth
+k8s_apiserver_ca_key_filename: ca.key
+k8s_apiserver_ca_cert_filename: ca.crt
+k8s_node_server_key_filename: server.key
+k8s_node_server_csr_filename: server.csr
+k8s_node_server_cert_filename: server.cert
 
 #Optional
 k8s_cluster_domain: '' #ex: kubernetes.local

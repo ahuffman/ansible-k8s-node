@@ -28,6 +28,65 @@
     - Restart flanneld
     - Restart kube-proxy
 
+#Verify Node Certificates Exist
+#---------------------------------------------------------
+- name: Check for presence of kubelet certificate path
+  stat: path="{{ k8s_node_cert_path }}"
+  register: node_cert_path
+
+- name: Check for presence of kubernetes master CA key
+  stat: path="{{ k8s_node_cert_path }}/{{ k8s_apiserver_ca_key_filename }}"
+  register: apiserver_ca_key
+
+- name: Check for presence of kubernetes master CA certificate
+  stat: path="{{ k8s_node_cert_path }}/{{ k8s_apiserver_ca_cert_filename }}"
+  register: apiserver_ca_cert
+
+- name: Check for presence of kubelet server key
+  stat: path="{{ k8s_node_cert_path }}/{{ k8s_node_server_key_filename }}"
+  register: node_server_key
+
+- name: Check for presence of kubelet server csr
+  stat: path="{{ k8s_node_cert_path }}/{{ k8s_node_server_csr_filename }}"
+  register: node_server_csr
+
+- name: Check for presence of kubelet server certificate
+  stat: path="{{ k8s_node_cert_path }}/{{ k8s_node_server_cert_filename }}"
+  register: node_server_cert
+
+#Create node certificate path
+- name: Create kubelet certificate path
+  file: path="{{ k8s_node_cert_path }}" state=directory mode=744 group=root owner=root
+  when: "node_cert_path.stat.exists != True"
+
+#Retrieve the CA key and certificate for generating node certificates
+- name: Retrieve kubernetes master CA key
+  copy: src="/etc/ansible/files/k8s-master-certs/{{ k8s_apiserver_ca_key_filename }}" dest="{{ k8s_node_cert_path }}/{{ k8s_apiserver_ca_key_filename }}"
+  when: "apiserver_ca_key.stat.exists != True"
+
+- name: Retrieve kubernetes master CA certificate
+  copy: src="/etc/ansible/files/k8s-master-certs/{{ k8s_apiserver_ca_cert_filename }}" dest="{{ k8s_node_cert_path }}/{{ k8s_apiserver_ca_cert_filename }}"
+  when: "apiserver_ca_cert.stat.exists != True"
+
+#Create openssl config
+- name: Create Custom OpenSSL Config for kubernetes node certificates
+  template: src=openssl/openssl.conf.j2 dest="{{ k8s_node_cert_path }}/openssl.conf"
+
+#Generate node certificates
+- name: Generate kubelet server key
+  shell: openssl genrsa -out "{{ k8s_node_cert_path }}/{{k8s_node_server_key_filename }}" 2048
+  when: "node_server_key.stat.exists != True"
+
+- name: Generate kubelet server CSR
+  shell: openssl req -new -key "{{ k8s_node_cert_path }}/{{ k8s_node_server_key_filename }}" -subj "/CN='{{ ansible_hostname }}'" -out "{{ k8s_node_cert_path }}/{{ k8s_node_server_csr_filename }}"
+  when: "node_server_csr.stat.exists != True"
+
+- name: Generate kubelet server certificate
+  shell: openssl x509 -req -in "{{ k8s_node_cert_path }}/{{ k8s_node_server_csr_filename }}" -CA "{{ k8s_node_cert_path }}/{{ k8s_apiserver_ca_cert_filename }}" -CAkey "{{ k8s_node_cert_path }}/{{ k8s_apiserver_ca_key_filename }}" -CAcreateserial -out "{{ k8s_node_cert_path }}/{{ k8s_node_server_cert_filename }}" -days 10000 -extensions v3_req -extfile "{{ k8s_node_cert_path }}/openssl.conf"
+  when: "node_server_cert.stat.exists != True"
+#End certificate generation
+
+
 #configure kubernetes
 - name: Configure kubernetes general settings
   template: src=kubernetes/config.j2 dest=/etc/kubernetes/config
