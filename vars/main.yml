@@ -3,5 +3,7 @@
 #kubernetes packages
 k8s_node_packages:
   - flannel
-  - docker
+#  - docker
+# temp -d (daemon compatibility fix)
+  - docker-1.8.2-10.el7.x86_64
   - kubernetes-node
