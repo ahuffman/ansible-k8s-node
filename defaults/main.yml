@@ -15,7 +15,8 @@ etcd_key: /kube01/network
 
 #kubernetes node settings
 k8s_master_url: https://kubernetes.local
-k8s_master_port: 6443
+k8s_master_port: 8080
+k8s_master_secure_port: 6443
 k8s_allow_privileged: false
 k8s_log_level: 0
 k8s_logtostderr: true
@@ -26,6 +27,8 @@ k8s_apiserver_ca_cert_filename: ca.crt
 k8s_node_server_key_filename: server.key
 k8s_node_server_csr_filename: server.csr
 k8s_node_server_cert_filename: server.cert
+k8s_proxy_kubeconfig_filename: proxy.kubeconfig
+k8s_kubelet_kubeconfig_filename: kubelet.kubeconfig
 
 #Optional
 k8s_cluster_domain: '' #ex: kubernetes.local

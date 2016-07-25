@@ -26,7 +26,8 @@ Role Variables
 * etcd_key: /kube01/network
 
 ####kubernetes node settings
-* k8s_master_url: http://kubernetes.local
+* k8s_master_url: https://kubernetes.local
+* k8s_master_secure_port: 6443
 * k8s_master_port: 8080
 * k8s_allow_privileged: false
 * k8s_log_level: 0
@@ -57,7 +58,7 @@ Example Playbook
 
     - hosts: kubernetes_nodes
       vars:
-        k8s_master_url: http://192.168.122.20
+        k8s_master_url: https//192.168.122.20
         k8s_cluster_domain: foo.bar.com
         k8s_cluster_dns_ip: 192.168.22.10
         etcd_server_url: http://192.168.122.20

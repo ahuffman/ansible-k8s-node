@@ -62,11 +62,11 @@
 #Retrieve the CA key and certificate for generating node certificates
 - name: Retrieve kubernetes master CA key
   copy: src="/etc/ansible/files/k8s-master-certs/{{ k8s_apiserver_ca_key_filename }}" dest="{{ k8s_node_cert_path }}/{{ k8s_apiserver_ca_key_filename }}"
-  when: "apiserver_ca_key.stat.exists != True"
+  when: (apiserver_ca_key.stat.exists != True and node_server_cert.stat.exists != True)
 
 - name: Retrieve kubernetes master CA certificate
   copy: src="/etc/ansible/files/k8s-master-certs/{{ k8s_apiserver_ca_cert_filename }}" dest="{{ k8s_node_cert_path }}/{{ k8s_apiserver_ca_cert_filename }}"
-  when: "apiserver_ca_cert.stat.exists != True"
+  when: (apiserver_ca_cert.stat.exists != True and node_server_cert.stat.exists != True)
 
 #Create openssl config
 - name: Create Custom OpenSSL Config for kubernetes node certificates
@@ -84,8 +84,29 @@
 - name: Generate kubelet server certificate
   shell: openssl x509 -req -in "{{ k8s_node_cert_path }}/{{ k8s_node_server_csr_filename }}" -CA "{{ k8s_node_cert_path }}/{{ k8s_apiserver_ca_cert_filename }}" -CAkey "{{ k8s_node_cert_path }}/{{ k8s_apiserver_ca_key_filename }}" -CAcreateserial -out "{{ k8s_node_cert_path }}/{{ k8s_node_server_cert_filename }}" -days 10000 -extensions v3_req -extfile "{{ k8s_node_cert_path }}/openssl.conf"
   when: "node_server_cert.stat.exists != True"
+  notify:
+    - Cleanup CA Files
+
 #End certificate generation
 
+#***Create kubeconfigs for secured connections
+#kubelet
+- name: Configure kubelet with secure kubeconfig
+  template: src=kubernetes/kubelet.kubeconfig.j2 dest=/etc/kubernetes/{{ k8s_kubelet_kubeconfig_filename }}
+  when: (k8s_mst_is_node == True) or 
+        (k8s_mst_is_node is undefined) #compat with k8s-master role
+  notify:
+    - Restart kubelet
+
+#proxy
+- name: Configure kube-proxy with secure kubeconfig
+  template: src=kubernetes/proxy.kubeconfig.j2 dest=/etc/kubernetes/{{ k8s_proxy_kubeconfig_filename }}
+  when: (k8s_mst_is_node == True) or
+        (k8s_mst_is_node is undefined) #compat with k8s-master role
+  notify:
+    - Restart flanneld
+    - Restart kube-proxy
+#End kubeconfigs
 
 #configure kubernetes
 - name: Configure kubernetes general settings
