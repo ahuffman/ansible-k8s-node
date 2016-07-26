@@ -14,6 +14,7 @@ etcd_port: 2379
 etcd_key: /kube01/network
 
 #kubernetes node settings
+k8s_master_hostname: '' #required to retrieve appropriate CA certs from Ansible server
 k8s_master_url: https://kubernetes.local
 k8s_master_port: 8080
 k8s_master_secure_port: 6443
