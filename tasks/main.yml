@@ -5,6 +5,12 @@
   yum: name='{{ item }}' state=latest
   with_items: '{{ k8s_node_packages }}'
 
+#Get current docker version for compatibility with flanneld systemd unit
+- name: Get currently installed docker version
+  command: "{{ repoquery_cmd }} --installed --qf '%{version}' docker"
+  register: docker_curr_ver
+  changed_when: false
+
 #configure docker
 - name: Configure docker
   template: src=sysconfig/docker.j2 dest=/etc/sysconfig/docker
@@ -20,6 +26,7 @@
     - Reload systemctl daemon
     - Restart flanneld
     - Restart kube-proxy
+    - Restart kubelet
 
 #configure flannel
 - name: Configure flanneld

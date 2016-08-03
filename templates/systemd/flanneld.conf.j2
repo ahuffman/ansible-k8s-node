@@ -7,7 +7,16 @@ Requires=flanneld.service
 EnvironmentFile=/run/flannel/subnet.env
 ExecStartPre=-/usr/sbin/ip link del docker0
 ExecStart=
+{% for version in docker_ver_check %}
+{% if version|string == docker_curr_ver|string %}
 ExecStart= /usr/bin/docker -d \
+{% else %}
+{% set docker_old_ver = "new" %}
+{% endif %}
+{% endfor %}
+{% if docker_old_ver == new %}
+ExecStart= /usr/bin/docker daemon \
+{% endif %}
       --bip=${FLANNEL_SUBNET} \
       --mtu=${FLANNEL_MTU} \
       $OPTIONS \
