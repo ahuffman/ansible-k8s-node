@@ -1,0 +1,18 @@
+# {{ ansible_managed }}
+###
+# kubernetes kubelet (minion) config
+
+# The address for the info server to serve on (set to 0.0.0.0 or "" for all interfaces)
+KUBELET_ADDRESS="--address={{ kubelet_address }}"
+
+# The port for the info server to serve on
+# KUBELET_PORT="--port=10250"
+
+# You may leave this blank to use the actual hostname
+KUBELET_HOSTNAME="--hostname_override={% if kubelet_hostname_override %}{{ kubelet_hostname_override }}{% endif %}"
+
+# location of the api-server
+KUBELET_API_SERVER="--api_servers={{ k8s_master_url }}:{{ k8s_master_port }}"
+
+# Add your own!
+KUBELET_ARGS="{% if k8s_cluster_domain %}--cluster-domain={{ k8s_cluster_domain }}{% endif %}{% if k8s_cluster_dns_ip %} --cluster-dns={{ k8s_cluster_dns_ip }}{% endif %}{% if kubelet_additional_args %} {{ kubelet_additional_args }}{% endif %}"

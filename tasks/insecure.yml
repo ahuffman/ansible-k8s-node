@@ -1,0 +1,62 @@
+---
+
+#install required packages
+- name: Ensure required kubernetes node packages are installed
+  yum: name='{{ item }}' state=latest
+  with_items: '{{ k8s_node_packages }}'
+
+#configure docker
+- name: Configure docker
+  template: src=sysconfig/docker.j2 dest=/etc/sysconfig/docker
+  notify: Restart flanneld
+
+#override docker service with flanneld drop-in
+- name: Create docker flanneld drop-in
+  file: path=/etc/systemd/system/docker.service.d state=directory owner=root group=root mode=0644
+
+- name: Configure docker with flanneld overlay network
+  template: src=systemd/flanneld.conf.j2 dest=/etc/systemd/system/docker.service.d/flanneld.conf
+  notify: 
+    - Reload systemctl daemon
+    - Restart flanneld
+    - Restart kube-proxy
+
+#configure flannel
+- name: Configure flanneld
+  template: src=sysconfig/flanneld.j2 dest=/etc/sysconfig/flanneld
+  notify:
+    - Restart flanneld
+    - Restart kube-proxy
+
+#configure kubernetes
+- name: Configure kubernetes general settings
+  template: src=kubernetes/config.j2 dest=/etc/kubernetes/config
+  notify: 
+    - Restart kubelet
+    - Restart kube-proxy
+  when: (k8s_mst_is_node != True) or
+        (k8s_mst_is_node is undefined) #compat with k8s-master role
+
+- name: Configure kubernetes node settings
+  template: src=kubernetes/kubelet.j2 dest=/etc/kubernetes/kubelet
+  notify: Restart kubelet
+
+- name: Configure kube-proxy settings
+  template: src=kubernetes/proxy.j2 dest=/etc/kubernetes/proxy
+  notify: Restart kube-proxy
+
+#configure services
+- name: Disable docker service (flanneld launches)
+  service: name=docker enabled=no
+
+- name: Enable flanneld service
+  service: name=flanneld enabled=yes
+  notify: Restart flanneld
+
+- name: Enable kubelet service
+  service: name=kubelet enabled=yes
+  notify: Restart kubelet
+
+- name: Enable kube-proxy service
+  service: name=kube-proxy enabled=yes
+  notify: Restart kube-proxy
