@@ -1,9 +1,11 @@
 ---
+#deploy secure node or insecure?  - If you deployed a secure master, then override this to true 
+k8s_secure_node: false  #set to false to ensure we don't hurt any v1.x role users upgrading to this ver.
 
 #docker settings
 docker_options: --selinux-enabled
 docker_cert_path: /etc/docker
-docker_add_registry: 'registry.access.redhat.com' #string separated by spaces to add more docker registries
+docker_add_registry: '' #string separated by spaces to add more docker registries
 docker_insecure_registry: '' #string separated by spaces to add more docker insecure registries
 docker_block_registry: '' #string separated by spaces to block more docker registries
 docker_tmpdir: /var/lib/docker/tmp
@@ -14,15 +16,15 @@ etcd_port: 2379
 etcd_key: /kube01/network
 
 #kubernetes node settings
-k8s_master_hostname: '' #required to retrieve appropriate CA certs from Ansible server
-k8s_master_url: https://kubernetes.local
-k8s_master_port: 8080
+k8s_master_hostname: '' #required to retrieve appropriate CA certs from Ansible control server - should be short hostname equivalent to ansible_hostname of kubernetes master
+k8s_master_insecure_port: 8080
 k8s_master_secure_port: 6443
 k8s_allow_privileged: false
 k8s_log_level: 0
 k8s_logtostderr: true
-#kubelet_address: 0.0.0.0 #override in host_vars with the host's IP address for proper kubelet certificate generation
-k8s_node_cert_path: /etc/kubernetes/auth
+
+#Secured configuration options
+k8s_node_cert_path: /etc/kubernetes/certs
 k8s_apiserver_ca_key_filename: ca.key
 k8s_apiserver_ca_cert_filename: ca.crt
 k8s_node_server_key_filename: server.key
@@ -32,7 +34,7 @@ k8s_proxy_kubeconfig_filename: proxy.kubeconfig
 k8s_kubelet_kubeconfig_filename: kubelet.kubeconfig
 
 #Optional
-k8s_cluster_domain: '' #ex: kubernetes.local
+k8s_cluster_domain: '' #ex: kubernetes.local - use if you have deployed skydns
 kubelet_hostname_override: ''
 k8s_cluster_dns_ip: '' #use if you have deployed skydns
 kubelet_additional_args: '' #use if you want to pass additional kubelet switches

@@ -20,4 +20,4 @@ KUBE_LOG_LEVEL="--v={{ k8s_log_level }}"
 KUBE_ALLOW_PRIV="--allow_privileged={{ k8s_allow_privileged }}"
 
 # How the controller-manager, scheduler, and proxy find the apiserver
-KUBE_MASTER="--master={{ k8s_master_url }}:{{  k8s_master_port }}"
+KUBE_MASTER="--master=http://{{ k8s_master_hostname }}:{{  k8s_master_insecure_port }}"

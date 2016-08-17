@@ -5,9 +5,15 @@
   yum: name='{{ item }}' state=latest
   with_items: '{{ k8s_node_packages }}'
 
+#Get current docker version for compatibility with flanneld systemd unit
+- name: Get currently installed docker version
+  command: "{{ repoquery_cmd }} --installed --qf '%{version}' docker"
+  register: docker_curr_ver
+  changed_when: false
+
 #configure docker
 - name: Configure docker
-  template: src=sysconfig/docker.j2 dest=/etc/sysconfig/docker
+  template: src=insecure/sysconfig/docker.j2 dest=/etc/sysconfig/docker
   notify: Restart flanneld
 
 #override docker service with flanneld drop-in
@@ -15,7 +21,7 @@
   file: path=/etc/systemd/system/docker.service.d state=directory owner=root group=root mode=0644
 
 - name: Configure docker with flanneld overlay network
-  template: src=systemd/flanneld.conf.j2 dest=/etc/systemd/system/docker.service.d/flanneld.conf
+  template: src=insecure/systemd/flanneld.conf.j2 dest=/etc/systemd/system/docker.service.d/flanneld.conf
   notify: 
     - Reload systemctl daemon
     - Restart flanneld
@@ -23,14 +29,14 @@
 
 #configure flannel
 - name: Configure flanneld
-  template: src=sysconfig/flanneld.j2 dest=/etc/sysconfig/flanneld
+  template: src=insecure/sysconfig/flanneld.j2 dest=/etc/sysconfig/flanneld
   notify:
     - Restart flanneld
     - Restart kube-proxy
 
 #configure kubernetes
 - name: Configure kubernetes general settings
-  template: src=kubernetes/config.j2 dest=/etc/kubernetes/config
+  template: src=insecure/kubernetes/config.j2 dest=/etc/kubernetes/config
   notify: 
     - Restart kubelet
     - Restart kube-proxy
@@ -38,11 +44,11 @@
         (k8s_mst_is_node is undefined) #compat with k8s-master role
 
 - name: Configure kubernetes node settings
-  template: src=kubernetes/kubelet.j2 dest=/etc/kubernetes/kubelet
+  template: src=insecure/kubernetes/kubelet.j2 dest=/etc/kubernetes/kubelet
   notify: Restart kubelet
 
 - name: Configure kube-proxy settings
-  template: src=kubernetes/proxy.j2 dest=/etc/kubernetes/proxy
+  template: src=insecure/kubernetes/proxy.j2 dest=/etc/kubernetes/proxy
   notify: Restart kube-proxy
 
 #configure services

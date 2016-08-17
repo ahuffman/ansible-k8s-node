@@ -1,10 +1,15 @@
 ---
 
 #kubernetes packages
+#To lock in a specific version of each package, override this with specific long package.version names
 k8s_node_packages:
   - flannel
   - docker
   - kubernetes-node
+  - openssl           #required for certificate generation
+  - yum-utils         #required for determining docker's currently installed version (repoquery)
+
+#for backward 'docker -d' command compatibility vs. 'docker daemon' in versions > 1.8.2
 docker_ver_check:
   - 0.11.1
   - 1.1.2
@@ -17,4 +22,5 @@ docker_ver_check:
   - 1.7.1
   - 1.8.2
 
-reqoquery_cmd: "{{ 'dnf repoquery --latest-limit 1 -d 0' if ansible_pkg_mgr == 'dnf' else 'repoquery --plugins' }}"
+#To determine currently installed docker version for backward docker.service drop-in command compatibility
+repoquery_cmd: "{{ 'dnf repoquery --latest-limit 1 -d 0' if ansible_pkg_mgr == 'dnf' else 'repoquery --plugins' }}"

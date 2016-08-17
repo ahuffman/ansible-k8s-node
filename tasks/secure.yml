@@ -36,7 +36,6 @@
     - Restart kube-proxy
 
 #Verify Node Certificates Exist
-#---------------------------------------------------------
 - name: Check for presence of kubelet certificate path
   stat: path="{{ k8s_node_cert_path }}"
   register: node_cert_path
@@ -63,7 +62,7 @@
 
 #Create node certificate path
 - name: Create kubelet certificate path
-  file: path="{{ k8s_node_cert_path }}" state=directory mode=744 group=root owner=root
+  file: path="{{ k8s_node_cert_path }}" state=directory mode=744 group=root owner=kube
   when: "node_cert_path.stat.exists != True"
 
 #Retrieve the CA key and certificate for generating node certificates
@@ -94,6 +93,16 @@
   notify:
     - Cleanup CA Files
 
+- name: Ensure proper permissions on kubernetes node certificates
+  file: dest="{{ k8s_node_cert_path }}/{{ item }}" mode=440 group=root owner=kube state=file
+  with_items:
+    - '{{ k8s_node_server_key_filename }}'
+    - '{{ k8s_node_server_csr_filename }}'
+    - '{{ k8s_node_server_cert_filename }}'
+  notify: 
+    - Restart flanneld
+    - Restart kube-proxy
+    - Restart kubelet
 #End certificate generation
 
 #***Create kubeconfigs for secured connections
