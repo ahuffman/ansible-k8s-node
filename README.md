@@ -78,18 +78,25 @@ Due to the docker daemon option switching from `-d` to `daemon` this variable wa
         - 1.8.2
 
 
-## Example Playbook
+## Example Playbook   
+### Insecured kubernetes node, where 192.168.122.20 is the IP address of the etcd server (and in this case also the kubernetes master.)   
 
-    - hosts: kubernetes_nodes
-      vars:
-        k8s_master_url: https://192.168.122.20
-        k8s_cluster_domain: foo.bar.com
-        k8s_cluster_dns_ip: 192.168.22.10
-        etcd_server_url: http://192.168.122.20
-        etcd_port: 2379
-        etcd_key: /foobar01/network
-      roles:
-         - k8s-node
+      - hosts: kubernetes_nodes
+        vars:
+          k8s_master_hostname: kubmst01
+          etcd_server_url: http://192.168.122.20
+        roles:
+          - k8s-node   
+
+### Secured kubernetes node, where 192.168.122.20 is the IP address of the etcd server (and in this case also the kubernetes master.)   
+
+      - hosts: kubernetes_nodes
+        vars:
+          k8s_secure_node: true
+          k8s_master_hostname: kubmst01
+          etcd_server_url: http://192.168.122.20
+        roles:
+          - k8s-node   
 
 ## License   
 
