@@ -38,4 +38,4 @@ k8s_cluster_domain: '' #ex: kubernetes.local - use if you have deployed skydns
 kubelet_hostname_override: ''
 k8s_cluster_dns_ip: '' #use if you have deployed skydns
 kubelet_additional_args: '' #use if you want to pass additional kubelet switches
-k8s_kube_proxy_additional_args: '' #use if you want to pass additional kube-proxy switches
+kube_proxy_additional_args: '' #use if you want to pass additional kube-proxy switches
