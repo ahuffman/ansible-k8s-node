@@ -54,7 +54,8 @@ Found in [`defaults/main.yml`](defaults/main.yml).
 ###Variables:  
 Found in [`vars/main.yml`](vars/main.yml).   
 
-The required packages for configuring your kubernetes nodes will be installed using the variable `k8s_node_packages`.
+The required packages for configuring your kubernetes nodes will be installed using the variable `k8s_node_packages`.   
+
       k8s_node_packages:
         - flannel
         - docker
