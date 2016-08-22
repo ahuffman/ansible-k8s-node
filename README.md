@@ -6,7 +6,7 @@ This role can deploy either a SSL Secured kubernetes node (kubelet) or an insecu
 
 ## Requirements
 
-If connecting to a kubernetes cluster, you may want to consider making use of the [`k8s-master`](https://galaxy.ansible.com/ahuffman/k8s-master/) role.
+If connecting to a kubernetes cluster, you may want to consider making use of the [`k8s-master`](https://galaxy.ansible.com/ahuffman/k8s-master/) role when deploying your master.
 
 ## Role Variables  
 ###Defaults:   
