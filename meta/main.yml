@@ -2,7 +2,7 @@
 galaxy_info:
   author: Andrew Huffman
   description: An ansible role to configure kubernetes nodes/minions on Red Hat Enterpise Linux based hosts.
-  license: license MIT
+  license: MIT
   min_ansible_version: 1.2
   #
   # Below are all platforms currently available. Just uncomment
