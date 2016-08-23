@@ -87,7 +87,7 @@ Due to the docker daemon option switching from `-d` to `daemon` this variable wa
           k8s_master_hostname: kubmst01
           etcd_server_url: http://192.168.122.20
         roles:
-          - k8s-node   
+          - ahuffman.k8s-node   
 
 ### Secured kubernetes node, where 192.168.122.20 is the IP address of the etcd server (and in this case also the kubernetes master.)   
 
@@ -97,7 +97,7 @@ Due to the docker daemon option switching from `-d` to `daemon` this variable wa
           k8s_master_hostname: kubmst01
           etcd_server_url: http://192.168.122.20
         roles:
-          - k8s-node   
+          - ahuffman.k8s-node   
 
 ### For examples utilizing both the `k8s-master` role in conjunction with the `k8s-node` role, please see the example playbooks in the [`k8s-master`](https://galaxy.ansible.com/ahuffman/k8s-master/) role.   
 
