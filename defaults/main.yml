@@ -11,12 +11,11 @@ docker_block_registry: '' #string separated by spaces to block more docker regis
 docker_tmpdir: /var/lib/docker/tmp
 
 #flannel network settings
-k8s_master_fqdn: ''
+k8s_master_fqdn: '' #required for etcd config and secured cert config
 etcd_port: 2379
 etcd_key: /kube01/network
 
 #kubernetes node settings
-k8s_master_hostname: '' #required to retrieve appropriate CA certs from Ansible control server - should be short hostname equivalent to ansible_hostname of kubernetes master
 k8s_master_insecure_port: 8080
 k8s_master_secure_port: 6443
 k8s_allow_privileged: false
