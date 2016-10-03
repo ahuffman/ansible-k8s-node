@@ -11,7 +11,7 @@ docker_block_registry: '' #string separated by spaces to block more docker regis
 docker_tmpdir: /var/lib/docker/tmp
 
 #flannel network settings
-etcd_server_url: http://kubernetes.local
+k8s_master_fqdn: ''
 etcd_port: 2379
 etcd_key: /kube01/network
 
