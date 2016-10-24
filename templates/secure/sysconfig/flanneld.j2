@@ -4,17 +4,9 @@
 # etcd url location.  Point this to the server where etcd runs
 FLANNEL_ETCD="https://{{ k8s_master_fqdn }}:{{ etcd_port }}"
 
-#secure etcd settings
-FLANNELD_ETCD_CAFILE={% if k8s_node_cert_path and k8s_apiserver_ca_cert_filename %}{{ k8s_node_cert_path}}/{{ k8s_apiserver_ca_cert_filename }}{% endif %}
-FLANNELD_ETCD_CERTFILE={% if k8s_node_cert_path and k8s_node_server_cert_filename %}{{ k8s_node_cert_path }}/{{ k8s_node_server_cert_filename }}{% endif %}
-FLANNELD_ETCD_KEYFILE={% if k8s_node_cert_path and k8s_node
-_server_key_filename %}{{ k8s_node_cert_path }}/{{ k8s_node
-_server_key_filename }}{% endif %}
-
 # etcd config key.  This is the configuration key that flannel queries
 # For address range assignment
 FLANNEL_ETCD_KEY="{{ etcd_key }}"
 
 # Any additional options that you want to pass
-#FLANNEL_OPTIONS=""
-
+FLANNEL_OPTIONS="{% if k8s_node_cert_path and k8s_apiserver_ca_cert_filename %}-etcd-cafile={{ k8s_node_cert_path }}/{{ k8s_apiserver_ca_cert_filename }}{% endif %}{% if k8s_node_cert_path and k8s_node_server_cert_filename %} -etcd-certfile={{ k8s_node_cert_path }}/{{ k8s_node_server_cert_filename }}{% endif %}{% if k8s_node_cert_path and k8s_node_server_key_filename %} -etcd-keyfile={{ k8s_node_cert_path }}/{{ k8s_node_server_key_filename }}{% endif %}"

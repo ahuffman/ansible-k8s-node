@@ -11,6 +11,14 @@
   register: docker_curr_ver
   changed_when: false
 
+#Configure Docker Storage
+- name: Configure Docker Storage
+  template: src=insecure/sysconfig/docker-storage-setup.j2 dest=/etc/sysconfig/docker-storage-setup
+  when:
+    - (k8s_mst_is_node == True) or (k8s_mst_is_node is undefined) #compat with k8s-master role
+    - k8s_docker_storage_setup == True
+  notify:  Restart flanneld
+
 #configure docker
 - name: Configure docker
   template: src=insecure/sysconfig/docker.j2 dest=/etc/sysconfig/docker

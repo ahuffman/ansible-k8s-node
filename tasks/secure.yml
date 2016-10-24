@@ -11,6 +11,15 @@
   register: docker_curr_ver
   changed_when: false
 
+#Configure Docker Storage
+- name: Configure Docker Storage
+  template: src=secure/sysconfig/docker-storage-setup.j2 dest=/etc/sysconfig/docker-storage-setup
+  when:
+    - (k8s_mst_is_node == True) or (k8s_mst_is_node is undefined) #compat with k8s-master role
+    - k8s_docker_storage_setup == True
+  notify:  Restart flanneld
+
+
 #configure docker
 - name: Configure docker
   template: src=secure/sysconfig/docker.j2 dest=/etc/sysconfig/docker
@@ -62,8 +71,7 @@
 
 #Create node certificate path
 - name: Create kubelet certificate path
-  file: path="{{ k8s_node_cert_path }}" state=directory mode=744 group=root owner=kube
-  when: "node_cert_path.stat.exists != True"
+  file: path="{{ k8s_node_cert_path }}" state=directory mode=655 group=root owner=root
 
 #Retrieve the CA key and certificate for generating node certificates
 - name: Retrieve kubernetes master CA key
@@ -94,7 +102,7 @@
     - Cleanup CA Files
 
 - name: Ensure proper permissions on kubernetes node certificates
-  file: dest="{{ k8s_node_cert_path }}/{{ item }}" mode=440 group=root owner=kube state=file
+  file: dest="{{ k8s_node_cert_path }}/{{ item }}" mode=644 group=root owner=root state=file
   with_items:
     - '{{ k8s_node_server_key_filename }}'
     - '{{ k8s_node_server_csr_filename }}'

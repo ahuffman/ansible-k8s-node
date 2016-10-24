@@ -12,7 +12,7 @@ KUBELET_ADDRESS="--address={{ ansible_default_ipv4.address }}"
 KUBELET_HOSTNAME="--hostname_override={% if kubelet_hostname_override %}{{ kubelet_hostname_override }}{% endif %}"
 
 # location of the api-server
-KUBELET_API_SERVER="--api_servers=http://{{ k8s_master_hostname }}:{{ k8s_master_insecure_port }}"
+KUBELET_API_SERVER="--api_servers=http://{{ k8s_master_fqdn }}:{{ k8s_master_insecure_port }}"
 
 # Add your own!
 KUBELET_ARGS="{% if k8s_cluster_domain %}--cluster-domain={{ k8s_cluster_domain }}{% endif %}{% if k8s_cluster_dns_ip %} --cluster-dns={{ k8s_cluster_dns_ip }}{% endif %}{% if kubelet_additional_args %} {{ kubelet_additional_args }}{% endif %}"

@@ -2,6 +2,9 @@
 #deploy secure node or insecure?  - If you deployed a secure master, then override this to true 
 k8s_secure_node: false  #set to false to ensure we don't hurt any v1.x role users upgrading to this ver.
 
+#Configure docker storage?
+k8s_docker_storage_setup: false
+
 #docker settings
 docker_options: --selinux-enabled
 docker_cert_path: /etc/docker
@@ -9,6 +12,13 @@ docker_add_registry: '' #string separated by spaces to add more docker registrie
 docker_insecure_registry: '' #string separated by spaces to add more docker insecure registries
 docker_block_registry: '' #string separated by spaces to block more docker registries
 docker_tmpdir: /var/lib/docker/tmp
+
+#*****docker-storage-setup options
+k8s_docker_storage_disk: ''
+k8s_docker_storage_vg: vg_docker
+k8s_docker_storage_options:
+  - AUTO_EXTEND_POOL=true
+  - POOL_AUTOEXTEND_THRESHOLD=80
 
 #flannel network settings
 k8s_master_fqdn: '' #required for etcd config and secured cert config
