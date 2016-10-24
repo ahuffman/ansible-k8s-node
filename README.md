@@ -14,6 +14,8 @@ Found in [`defaults/main.yml`](defaults/main.yml).
 #### k8s-node Role settings:
 `k8s_secure_node`: false - Whether or not to configure the node to connect to the kubernetes master over secure channels.  Deployment of your kubernetes master via the [`k8s-master`](https://galaxy.ansible.com/ahuffman/k8s-master/) role is required for this to be able to generate the node certificates properly.   
 
+`k8s_docker_storage_setup`: false - Whether or not to configure docker's container storage.   
+
 #### Docker engine settings:   
 `docker_options`: --selinux-enabled - You can pass additional options here if you wish.  See `man docker` for all available options.   
 `docker_cert_path`: /etc/docker - Default path for docker engine certificates.   
@@ -22,13 +24,20 @@ Found in [`defaults/main.yml`](defaults/main.yml).
 `docker_block_registry`: '' - String of docker registries you would like to block from image pulling.   
 `docker_tmpdir`: /var/lib/docker/tmp - Temporary docker storage path.   
 
+#### Docker storage setup options:   
+`k8s_docker_storage_disk`: '' - Used with the k8s_docker_storage_setup option above.  Provide an unformatted device such as '/dev/sdb'.  This assumes it is a clean server deployment.  If you've already started the docker engine, then you'll have to cleanup the default storage pool.   
+`k8s_docker_storage_vg`: vg_docker - The volume group to use/create for docker storage.   
+`k8s_docker_storage_options`:   
+   - AUTO_EXTEND_POOL = true   
+   - POOL_AUTOEXTEND_THRESHOLD   
+See 'man docker-storage-setup` for all available options.  You can add whichever best suit your environment, but the defaults here should work well for you.   
+
 #### Flanneld Network Settings/Etcd Client Settings:   
-`etcd_server_url`: http://kubernetes.local - URL (minus the port number) to your etcd server.  If using the [`k8s-master`](https://galaxy.ansible.com/ahuffman/k8s-master/) role, then this should be replaced by the URL to your deployed master server.   
+`k8s_master_fqdn`: '' Required for generating certificates along with the general setup of many of the node's configurations.  ex: foo.bar.com   
 `etcd_port`: 2379 - The port on which to communicate with your etcd server.   
 `etcd_key`: /kube01/network - The key in etcd to obtain flanneld's network configuration from.  This should match the key you deployed with the [`k8s-master`](https://galaxy.ansible.com/ahuffman/k8s-master/) role.   
 
 #### Kubernetes node settings:   
-`k8s_master_hostname`: '' - This should be set to the short (non-FQDN) hostname of your kubernetes master server so that this role can grab the appropriate CA certificates from the Ansible control server.  It is also used to configure the kubelet and other components of your node.   
 `k8s_master_insecure_port`: 8080 - The port to communicate insecurely with your kubernetes master on.   
 `k8s_master_secure_port`: 6443 -  The port to communicate securely with your kubernetes master on.   
 `k8s_allow_privileged`: false - Whether or not to allow privileged containers (i.e. containers that can obtain root level access to your node systems.)   
@@ -84,7 +93,7 @@ Due to the docker daemon option switching from `-d` to `daemon` this variable wa
 
       - hosts: kubernetes_nodes
         vars:
-          k8s_master_hostname: kubmst01
+          k8s_master_fqdn: kubmst01
           etcd_server_url: http://192.168.122.20
         roles:
           - ahuffman.k8s-node   
@@ -94,8 +103,7 @@ Due to the docker daemon option switching from `-d` to `daemon` this variable wa
       - hosts: kubernetes_nodes
         vars:
           k8s_secure_node: true
-          k8s_master_hostname: kubmst01
-          etcd_server_url: http://192.168.122.20
+          k8s_master_fqdn: kubmst01
         roles:
           - ahuffman.k8s-node   
 
