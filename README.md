@@ -27,9 +27,9 @@ Found in [`defaults/main.yml`](defaults/main.yml).
 #### Docker storage setup options:   
 `k8s_docker_storage_disk`: '' - Used with the k8s_docker_storage_setup option above.  Provide an unformatted device such as '/dev/sdb'.  This assumes it is a clean server deployment.  If you've already started the docker engine, then you'll have to cleanup the default storage pool.   
 `k8s_docker_storage_vg`: vg_docker - The volume group to use/create for docker storage.   
-     k8s_docker_storage_options:   
-        - AUTO_EXTEND_POOL = true   
-        - POOL_AUTOEXTEND_THRESHOLD   
+       k8s_docker_storage_options:   
+         - AUTO_EXTEND_POOL = true   
+         - POOL_AUTOEXTEND_THRESHOLD   
 See 'man docker-storage-setup` for all available options.  You can add whichever best suit your environment, but the defaults here should work well for you.   
 
 #### Flanneld Network Settings/Etcd Client Settings:   
