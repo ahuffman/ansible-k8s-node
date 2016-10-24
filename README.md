@@ -6,7 +6,7 @@ This role can deploy either a SSL Secured kubernetes node (kubelet) or an insecu
 
 ## Requirements
 
-If connecting to a kubernetes cluster, you may want to consider making use of the [`k8s-master`](https://galaxy.ansible.com/ahuffman/k8s-master/) role when deploying your master, especially if you wish to make use of the secure configuration.
+If connecting to a kubernetes cluster, you may want to consider making use of the [`k8s-master`](https://galaxy.ansible.com/ahuffman/k8s-master/) role when deploying your master, especially if you wish to make use of the secure configuration.  Use of the docker storage setup options assumes that you are deploying to a fresh server, and that there currently is not a docker-pool.
 
 ## Role Variables  
 ###Defaults:   
@@ -93,7 +93,7 @@ Due to the docker daemon option switching from `-d` to `daemon` this variable wa
 
       - hosts: kubernetes_nodes
         vars:
-          k8s_master_fqdn: kubmst01
+          k8s_master_fqdn: kubmst01.foobar.com
           etcd_server_url: http://192.168.122.20
         roles:
           - ahuffman.k8s-node   
@@ -103,7 +103,7 @@ Due to the docker daemon option switching from `-d` to `daemon` this variable wa
       - hosts: kubernetes_nodes
         vars:
           k8s_secure_node: true
-          k8s_master_fqdn: kubmst01
+          k8s_master_fqdn: kubmst01.foobar.com
         roles:
           - ahuffman.k8s-node   
 
