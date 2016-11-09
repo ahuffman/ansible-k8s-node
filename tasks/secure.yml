@@ -75,11 +75,11 @@
 
 #Retrieve the CA key and certificate for generating node certificates
 - name: Retrieve kubernetes master CA key
-  copy: src="/etc/ansible/files/k8s-master-certs/{{ k8s_master_fqdn }}/{{ k8s_apiserver_ca_key_filename }}" dest="{{ k8s_node_cert_path }}/{{ k8s_apiserver_ca_key_filename }}"
+  copy: src=files/k8s-master-certs/"{{ k8s_master_fqdn }}"/"{{ k8s_apiserver_ca_key_filename }}" dest="{{ k8s_node_cert_path }}"/"{{ k8s_apiserver_ca_key_filename }}"
   when: (apiserver_ca_key.stat.exists != True and node_server_cert.stat.exists != True)
 
 - name: Retrieve kubernetes master CA certificate
-  copy: src="/etc/ansible/files/k8s-master-certs/{{ k8s_master_fqdn }}/{{ k8s_apiserver_ca_cert_filename }}" dest="{{ k8s_node_cert_path }}/{{ k8s_apiserver_ca_cert_filename }}"
+  copy: src=files/k8s-master-certs/"{{ k8s_master_fqdn }}"/"{{ k8s_apiserver_ca_cert_filename }}" dest="{{ k8s_node_cert_path }}"/"{{ k8s_apiserver_ca_cert_filename }}"
   when: (apiserver_ca_cert.stat.exists != True and node_server_cert.stat.exists != True)
 
 #Create openssl config
