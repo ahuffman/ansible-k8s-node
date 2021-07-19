@@ -1,3 +1,5 @@
+![Ansible Role](https://img.shields.io/ansible/role/d/9307)
+
 # ahuffman.k8s-node
 
 An ansible role to configure kubernetes nodes/minions on Red Hat Enterpise Linux based hosts.
